@@ -1,0 +1,27 @@
+{
+  "name": "mcp-server-aws",
+  "version": "1.0.0",
+  "description": "MCP server for AWS operations",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@aws-sdk/client-ec2": "^3.500.0",
+    "@aws-sdk/client-s3": "^3.500.0",
+    "@aws-sdk/client-lambda": "^3.500.0",
+    "@aws-sdk/client-cloudwatch": "^3.500.0",
+    "@aws-sdk/client-iam": "^3.500.0",
+    "@aws-sdk/client-sts": "^3.500.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.0",
+    "@types/node": "^20.11.0"
+  },
+  "license": "MIT"
+}
