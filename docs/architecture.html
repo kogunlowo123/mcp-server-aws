@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture - mcp-server-aws</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0b0c0b;color:#f5f2eb;font-family:'SF Mono','Fira Code','Cascadia Code',Consolas,monospace;line-height:1.6;padding:0}
+a{color:#c8420a;text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:1200px;margin:0 auto;padding:2rem}
+h1{font-size:2rem;color:#f5f2eb;margin-bottom:0.5rem}
+h2{font-size:1.4rem;color:#c8420a;margin:2rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid #222}
+h3{font-size:1.1rem;color:#f5f2eb;margin:1.5rem 0 0.75rem}
+.badge{display:inline-block;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-right:0.5rem;margin-bottom:0.5rem}
+.badge-lang{background:#1a3a1a;color:#4ade80;border:1px solid #2d5a2d}
+.badge-cat{background:#1a1a3a;color:#60a5fa;border:1px solid #2d2d5a}
+.badge-ver{background:#3a1a1a;color:#f87171;border:1px solid #5a2d2d}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0}
+.card{background:#141514;border:1px solid #222;border-radius:8px;padding:1.25rem;text-align:center}
+.card-value{font-size:1.5rem;color:#c8420a;font-weight:700}
+.card-label{font-size:0.8rem;color:#888;margin-top:0.25rem}
+.arch-diagram{background:#101210;border:1px solid #222;border-radius:8px;padding:2rem;margin:1rem 0;overflow-x:auto}
+.flow-row{display:flex;justify-content:center;align-items:center;gap:0.5rem;margin:0.75rem 0;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #c8420a;border-radius:6px;padding:0.5rem 1rem;font-size:0.8rem;text-align:center;min-width:120px;color:#f5f2eb}
+.flow-box.accent{background:#c8420a;color:#fff;border-color:#e8520a}
+.flow-box.blue{border-color:#1982c4;background:#0f1f3a}
+.flow-box.green{border-color:#2b9348;background:#0f2a1a}
+.flow-box.purple{border-color:#533483;background:#1a0f2e}
+.flow-box.orange{border-color:#e36414;background:#2a1a0a}
+.flow-arrow{color:#c8420a;font-size:1.2rem;font-weight:bold}
+.flow-arrow-down{display:flex;justify-content:center;color:#c8420a;font-size:1.2rem;font-weight:bold}
+.flow-label{font-size:0.7rem;color:#888;display:block}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.85rem}
+th{background:#1a1a1a;color:#c8420a;padding:0.75rem;text-align:left;border-bottom:2px solid #333;white-space:nowrap}
+td{padding:0.75rem;border-bottom:1px solid #1a1a1a}
+tr:hover{background:#141514}
+code{background:#1a1a1a;padding:0.15rem 0.4rem;border-radius:3px;font-size:0.85rem;color:#e8a060}
+.checklist{list-style:none;padding:0}
+.checklist li{padding:0.4rem 0;padding-left:1.5rem;position:relative}
+.checklist li::before{content:'[ ]';position:absolute;left:0;color:#c8420a;font-weight:bold}
+.section-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+.section-box{background:#141514;border:1px solid #222;border-radius:8px;padding:1.25rem}
+.section-box h3{margin-top:0}
+footer{margin-top:3rem;padding:1.5rem 0;border-top:1px solid #222;text-align:center;font-size:0.75rem;color:#555}
+.env-table td:first-child{color:#4ade80}
+.header-bar{background:#141514;border-bottom:1px solid #222;padding:1.5rem 0}
+.header-bar .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.industry-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.industry-card{background:#141514;border:1px solid #222;border-radius:8px;padding:1rem}
+.industry-card h4{color:#c8420a;margin-bottom:0.5rem;font-size:0.95rem}
+.industry-card p{font-size:0.8rem;color:#aaa}
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+<div class="container">
+<div>
+<h1>mcp-server-aws</h1>
+<p style="color:#888;margin-top:0.25rem">MCP server providing tools for interacting with AWS services</p>
+</div>
+<div>
+<span class="badge badge-lang">TypeScript</span>
+<span class="badge badge-cat">API/Service</span>
+<span class="badge badge-ver">v1.0.0</span>
+</div>
+</div>
+</div>
+
+<div class="container">
+
+<h2>Executive Summary</h2>
+<p>An MCP (Model Context Protocol) server that exposes AWS service operations as MCP tools, enabling AI assistants to interact with AWS infrastructure. Provides 7 tools covering EC2 instance listing, S3 bucket and object operations, Lambda function invocation, CloudWatch metrics retrieval, IAM role listing, and STS identity verification. Uses the AWS SDK v3 with individual service client packages and communicates via stdio transport for integration with MCP clients like Claude Desktop.</p>
+
+<h2>Overview</h2>
+<div class="cards">
+<div class="card"><div class="card-value">TypeScript</div><div class="card-label">Language</div></div>
+<div class="card"><div class="card-value">API/Service</div><div class="card-label">Category</div></div>
+<div class="card"><div class="card-value">8</div><div class="card-label">Dependencies</div></div>
+<div class="card"><div class="card-value">7</div><div class="card-label">MCP Tools</div></div>
+<div class="card"><div class="card-value">6</div><div class="card-label">AWS Services</div></div>
+<div class="card"><div class="card-value">MIT</div><div class="card-label">License</div></div>
+</div>
+
+<h2>Architecture Diagram</h2>
+<div class="arch-diagram">
+<div class="flow-row">
+<div class="flow-box blue">MCP Client<br><span class="flow-label">Claude Desktop / IDE</span></div>
+</div>
+<div class="flow-arrow-down">| stdio transport |</div>
+<div class="flow-row">
+<div class="flow-box accent">MCP Server Entry<br><span class="flow-label">src/index.ts</span></div>
+</div>
+<div class="flow-arrow-down">v</div>
+<div class="flow-row">
+<div class="flow-box orange">ec2_list_instances</div>
+<div class="flow-box blue">s3_list_buckets</div>
+<div class="flow-box green">s3_get_object</div>
+<div class="flow-box purple">lambda_invoke</div>
+</div>
+<div class="flow-row">
+<div class="flow-box orange">cloudwatch_get_metrics</div>
+<div class="flow-box blue">iam_list_roles</div>
+<div class="flow-box green">sts_get_caller_identity</div>
+</div>
+<div class="flow-label" style="text-align:center">MCP Tool Handlers</div>
+<div class="flow-arrow-down">v</div>
+<div class="flow-row">
+<div class="flow-box accent">EC2</div>
+<div class="flow-box accent">S3</div>
+<div class="flow-box accent">Lambda</div>
+<div class="flow-box accent">CloudWatch</div>
+<div class="flow-box accent">IAM</div>
+<div class="flow-box accent">STS</div>
+</div>
+<div class="flow-label" style="text-align:center">AWS Services (via AWS SDK v3)</div>
+</div>
+
+<h2>Component Breakdown</h2>
+<table>
+<thead><tr><th>Tool</th><th>File</th><th>AWS Service</th><th>Parameters</th></tr></thead>
+<tbody>
+<tr><td>ec2_list_instances</td><td><code>src/tools/ec2_list_instances.ts</code></td><td>EC2</td><td><code>region?</code>, <code>filters?</code></td></tr>
+<tr><td>s3_list_buckets</td><td><code>src/tools/s3_list_buckets.ts</code></td><td>S3</td><td>none</td></tr>
+<tr><td>s3_get_object</td><td><code>src/tools/s3_get_object.ts</code></td><td>S3</td><td><code>bucket</code>, <code>key</code></td></tr>
+<tr><td>lambda_invoke</td><td><code>src/tools/lambda_invoke.ts</code></td><td>Lambda</td><td><code>function_name</code>, <code>payload?</code></td></tr>
+<tr><td>cloudwatch_get_metrics</td><td><code>src/tools/cloudwatch_get_metrics.ts</code></td><td>CloudWatch</td><td><code>namespace</code>, <code>metric_name</code>, <code>dimensions?</code>, <code>period?</code>, <code>start_time</code>, <code>end_time</code></td></tr>
+<tr><td>iam_list_roles</td><td><code>src/tools/iam_list_roles.ts</code></td><td>IAM</td><td><code>path_prefix?</code>, <code>max_items?</code></td></tr>
+<tr><td>sts_get_caller_identity</td><td><code>src/tools/sts_get_caller_identity.ts</code></td><td>STS</td><td>none</td></tr>
+</tbody>
+</table>
+
+<h2>Data Flow / Request Flow</h2>
+<div class="section-box">
+<ol style="padding-left:1.5rem;color:#ccc">
+<li><strong>Client Connection</strong> -- MCP client (e.g., Claude Desktop) connects to the server via stdio transport.</li>
+<li><strong>Tool Discovery</strong> -- Client discovers available tools via the MCP protocol handshake.</li>
+<li><strong>Tool Invocation</strong> -- Client sends a tool call with name and parameters (validated via Zod schemas).</li>
+<li><strong>AWS API Call</strong> -- The tool handler creates the appropriate AWS SDK v3 client and makes the API call.</li>
+<li><strong>Response</strong> -- AWS response is serialized and returned to the MCP client via stdio.</li>
+</ol>
+</div>
+
+<h2>Security Controls</h2>
+<table>
+<thead><tr><th>Control</th><th>Implementation</th></tr></thead>
+<tbody>
+<tr><td>AWS Authentication</td><td>Standard AWS credential chain: env vars, profiles, IAM roles</td></tr>
+<tr><td>Input Validation</td><td>Zod schema validation for all tool parameters</td></tr>
+<tr><td>Least Privilege</td><td>Each tool requires only specific AWS IAM permissions</td></tr>
+<tr><td>No Persistent State</td><td>Server is stateless; no credentials stored on disk</td></tr>
+<tr><td>Transport Security</td><td>stdio transport (local process); Docker isolation for remote</td></tr>
+</tbody>
+</table>
+
+<h2>Industry Adaptation</h2>
+<div class="industry-grid">
+<div class="industry-card"><h4>Healthcare</h4><p>AI-assisted HIPAA-compliant infrastructure monitoring. EC2 instance auditing for PHI workloads. CloudWatch alerts for healthcare application SLAs.</p></div>
+<div class="industry-card"><h4>Finance</h4><p>Lambda invocation for real-time transaction processing. IAM role auditing for SOX compliance. CloudWatch metrics for trading system latency.</p></div>
+<div class="industry-card"><h4>Government</h4><p>GovCloud region support. IAM role compliance auditing. S3 bucket policy verification for classified data handling.</p></div>
+<div class="industry-card"><h4>Retail</h4><p>S3 catalog management. Lambda-based order processing triggers. EC2 fleet monitoring during peak sales events.</p></div>
+<div class="industry-card"><h4>SaaS</h4><p>Multi-region EC2 fleet management. S3 tenant data access. CloudWatch dashboards for service health monitoring.</p></div>
+</div>
+
+<h2>Production Readiness Checklist</h2>
+<ul class="checklist">
+<li>Configure AWS credentials (access keys, IAM role, or profile)</li>
+<li>Set AWS_REGION for target region</li>
+<li>Create IAM policy with least-privilege permissions for required tools</li>
+<li>Build TypeScript: <code>npm run build</code></li>
+<li>Test tool invocations against non-production AWS account</li>
+<li>Configure MCP client (Claude Desktop) with server path</li>
+<li>Deploy via Docker for isolated execution</li>
+<li>Set up CloudTrail logging for API call auditing</li>
+</ul>
+
+<h2>Configuration / Environment Variables</h2>
+<table class="env-table">
+<thead><tr><th>Variable</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>AWS_ACCESS_KEY_ID</code></td><td>Yes*</td><td>--</td><td>AWS access key ID (*if not using profile/role)</td></tr>
+<tr><td><code>AWS_SECRET_ACCESS_KEY</code></td><td>Yes*</td><td>--</td><td>AWS secret access key</td></tr>
+<tr><td><code>AWS_REGION</code></td><td>No</td><td>us-east-1</td><td>AWS region</td></tr>
+<tr><td><code>AWS_PROFILE</code></td><td>No</td><td>--</td><td>AWS profile name</td></tr>
+</tbody>
+</table>
+
+<h2>Deployment</h2>
+<div class="section-grid">
+<div class="section-box">
+<h3>Standalone</h3>
+<pre><code>npm install
+npm run build
+npm start</code></pre>
+</div>
+<div class="section-box">
+<h3>Docker</h3>
+<pre><code>docker build -t mcp-server-aws .
+docker run \
+  -e AWS_ACCESS_KEY_ID=xxx \
+  -e AWS_SECRET_ACCESS_KEY=xxx \
+  mcp-server-aws</code></pre>
+</div>
+</div>
+
+<h2>Links</h2>
+<table>
+<tbody>
+<tr><td>Repository</td><td><a href="https://github.com/your-org/mcp-server-aws">github.com/your-org/mcp-server-aws</a></td></tr>
+<tr><td>README</td><td><a href="../README.md">README.md</a></td></tr>
+<tr><td>License</td><td><a href="../LICENSE">MIT License</a></td></tr>
+</tbody>
+</table>
+
+<footer>
+Generated on 2026-03-15 | mcp-server-aws v1.0.0 | Architecture Documentation
+</footer>
+
+</div>
+</body>
+</html>
