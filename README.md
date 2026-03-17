@@ -1,3 +1,7 @@
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?logo=typescript&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+![GitHub release](https://img.shields.io/github/v/release/kogunlowo123/mcp-server-aws)
+
 # mcp-server-aws
 
 An MCP (Model Context Protocol) server that provides tools for interacting with AWS services including EC2, S3, Lambda, CloudWatch, IAM, and STS.
